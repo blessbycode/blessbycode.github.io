@@ -1,0 +1,644 @@
+---
+
+---
+
+<!-- <div id="cursor"></div> -->
+<section class="hero" id="hero">
+  <canvas id="starCanvas"></canvas>
+  <canvas id="trailCanvas"></canvas>
+  <div class="horizon"></div>
+  <div class="grain"></div>
+
+  <!-- Mountain SVG -->
+  <svg
+    class="mountains"
+    viewBox="0 0 1440 280"
+    preserveAspectRatio="xMidYMax slice"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <!-- far mountains -->
+    <path
+      d="M0 280 L80 190 L160 220 L260 150 L360 200 L440 130 L520 175 L620 100 L700 155 L800 85 L880 135 L960 70 L1040 120 L1140 60 L1220 110 L1320 75 L1440 130 L1440 280 Z"
+      fill="rgba(249,115,22,.04)"></path>
+    <!-- mid mountains -->
+    <path
+      d="M0 280 L120 230 L200 255 L320 195 L420 245 L540 175 L640 230 L740 160 L820 210 L940 155 L1060 205 L1160 165 L1280 200 L1380 175 L1440 195 L1440 280 Z"
+      fill="rgba(249,115,22,.06)"></path>
+    <!-- near mountains (darkest) -->
+    <path
+      d="M0 280 L60 268 L160 245 L240 262 L360 238 L460 268 L580 240 L680 258 L800 235 L900 252 L1020 238 L1120 255 L1240 240 L1360 252 L1440 245 L1440 280 Z"
+      fill="rgba(249,115,22,.09)"></path>
+    <!-- ground line -->
+    <line
+      x1="0"
+      y1="279"
+      x2="1440"
+      y2="279"
+      stroke="rgba(249,115,22,.12)"
+      stroke-width="1"></line>
+  </svg>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="eyebrow">
+      <div class="ew-dot"></div>
+      Guides · blessbycode
+    </div>
+
+    <div class="headline">
+      <span class="hl-pre">your path to</span>
+      <span class="hl-main"><span class="fire-word">mastery</span></span>
+      <span class="hl-suffix">starts here.</span>
+    </div>
+
+    <p class="subtext">
+      Structured, multi-part guides with a real destination. Every step earns
+      the next — no gaps, no hand-waving, no "left as an exercise."
+    </p>
+  </div>
+
+  <!-- MILESTONE TRAIL -->
+  <div class="trail-path">
+    <div class="trail-item" data-lvl="1">
+      <div class="ti-content">
+        <div class="ti-num" style="color:rgba(249,115,22,.4)">Stage 01</div>
+        <div class="ti-title">Foundations</div>
+        <div class="ti-desc">HTML · CSS · JS · Git · CLI</div>
+      </div>
+    </div>
+    <div class="trail-connector"></div>
+    <div class="trail-item" data-lvl="2">
+      <div class="ti-content">
+        <div class="ti-num" style="color:rgba(251,146,60,.4)">Stage 02</div>
+        <div class="ti-title">Production</div>
+        <div class="ti-desc">React · TypeScript · APIs · Auth</div>
+      </div>
+    </div>
+    <div class="trail-connector"></div>
+    <div class="trail-item" data-lvl="3">
+      <div class="ti-content">
+        <div class="ti-num" style="color:rgba(251,191,36,.4)">Stage 03</div>
+        <div class="ti-title">Mastery</div>
+        <div class="ti-desc">Architecture · Perf · Scale · DX</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="bb-left">complete guides · learning paths · all free</div>
+    <div class="bb-right">move cursor to <span>navigate the stars</span></div>
+  </div>
+</section>
+
+<style is:inline>
+  .hero {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* ── STAR FIELD CANVAS ── */
+  #starCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* ── SHOOTING STAR TRAIL CANVAS ── */
+  #trailCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ── MOUNTAIN SILHOUETTE (SVG at bottom) ── */
+  .mountains {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ── WARM HORIZON GLOW ── */
+  .horizon {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    height: 40%;
+    background: linear-gradient(
+      to top,
+      rgba(249, 115, 22, 0.08) 0%,
+      rgba(251, 146, 60, 0.04) 30%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  /* ── GRAIN ── */
+  .grain {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 180px;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    position: relative;
+    z-index: 5;
+    padding: 0 8vw;
+    max-width: 680px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(249, 115, 22, 0.45);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: riseIn 0.6s ease 0.3s forwards;
+  }
+  .ew-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f97316;
+    animation: dotGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes dotGlow {
+    0%,
+    100% {
+      box-shadow: 0 0 4px rgba(249, 115, 22, 0.4);
+    }
+    50% {
+      box-shadow:
+        0 0 14px rgba(249, 115, 22, 0.9),
+        0 0 28px rgba(249, 115, 22, 0.3);
+    }
+  }
+
+  /* HEADLINE */
+  .headline {
+    font-family: var(--font-primary);
+    line-height: 0.93;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+  }
+  .hl-pre {
+    display: block;
+    font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(240, 237, 228, 0.4);
+    opacity: 0;
+    animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+  }
+  .hl-main {
+    display: block;
+    font-size: clamp(5rem, 10vw, 9rem);
+    font-weight: 700;
+    color: #f0ede4;
+    opacity: 0;
+    animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.58s forwards;
+    text-shadow: 0 0 80px rgba(249, 115, 22, 0.1);
+  }
+  .hl-main .fire-word {
+    background: linear-gradient(120deg, #f97316 0%, #fbbf24 50%, #f97316 100%);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fireShimmer 4s ease-in-out infinite;
+  }
+  @keyframes fireShimmer {
+    0%,
+    100% {
+      background-position: 0%;
+    }
+    50% {
+      background-position: 100%;
+    }
+  }
+
+  .hl-suffix {
+    display: block;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 600;
+    font-style: italic;
+    color: rgba(240, 237, 228, 0.55);
+    opacity: 0;
+    animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.72s forwards;
+  }
+
+  .subtext {
+    font-size: clamp(0.88rem, 1.4vw, 1rem);
+    line-height: 1.76;
+    font-weight: 300;
+    color: rgba(240, 237, 228, 0.38);
+    max-width: 400px;
+    opacity: 0;
+    animation: riseIn 0.6s ease 0.9s forwards;
+  }
+
+  /* ── MILESTONE TRAIL ── */
+  .trail-path {
+    position: absolute;
+    right: 7vw;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+    z-index: 5;
+    opacity: 0;
+    animation: riseIn 0.6s ease 0.6s forwards;
+  }
+  .trail-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-right: 1px solid rgba(249, 115, 22, 0.1);
+    padding-right: 20px;
+    position: relative;
+    cursor: default;
+    transition: padding-right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .trail-item:hover {
+    padding-right: 30px;
+  }
+  .trail-item::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(249, 115, 22, 0.3);
+    background: #07060e;
+    transition:
+      border-color 0.3s,
+      box-shadow 0.3s;
+  }
+  .trail-item:hover::after {
+    border-color: #f97316;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+  }
+
+  .ti-content {
+    text-align: right;
+  }
+  .ti-num {
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .ti-title {
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.1;
+    transition: color 0.25s;
+  }
+  [data-lvl='1'] .ti-title {
+    color: rgba(249, 115, 22, 0.7);
+  }
+  [data-lvl='2'] .ti-title {
+    color: rgba(251, 146, 60, 0.65);
+  }
+  [data-lvl='3'] .ti-title {
+    color: rgba(251, 191, 36, 0.6);
+  }
+  .trail-item:hover .ti-title {
+    opacity: 1 !important;
+  }
+  [data-lvl='1']:hover .ti-title {
+    color: #f97316;
+  }
+  [data-lvl='2']:hover .ti-title {
+    color: #fb923c;
+  }
+  [data-lvl='3']:hover .ti-title {
+    color: #fbbf24;
+  }
+
+  .ti-desc {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.04em;
+    color: rgba(249, 115, 22, 0.25);
+    margin-top: 2px;
+    transition: color 0.25s;
+  }
+  .trail-item:hover .ti-desc {
+    color: rgba(249, 115, 22, 0.5);
+  }
+
+  /* connector line between items */
+  .trail-connector {
+    width: 1px;
+    height: 24px;
+    background: linear-gradient(
+      to bottom,
+      rgba(249, 115, 22, 0.08),
+      rgba(249, 115, 22, 0.14)
+    );
+    margin-right: calc(20px + 3px);
+    align-self: flex-end;
+  }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    padding: 14px 8vw;
+    border-top: 1px solid rgba(249, 115, 22, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    animation: riseIn 0.5s ease 1s forwards;
+  }
+  .bb-left {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(249, 115, 22, 0.25);
+  }
+  .bb-right {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    color: rgba(249, 115, 22, 0.2);
+  }
+  .bb-right span {
+    color: rgba(249, 115, 22, 0.45);
+  }
+
+  @media (max-width: 767px) {
+    .bb-right {
+      display: none;
+    }
+  }
+
+  @keyframes riseIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ── LIGHT THEME ── */
+  [data-theme='github-light'] {
+    .horizon {
+      background: linear-gradient(
+        to top,
+        rgba(249, 115, 22, 0.14) 0%,
+        rgba(251, 146, 60, 0.07) 30%,
+        transparent 100%
+      );
+    }
+
+    /* ── LIGHT THEME: mountain fills (more visible against pale sky) ── */
+    .mountains path:nth-child(1) {
+      fill: rgba(180, 80, 10, 0.07);
+    }
+    .mountains path:nth-child(2) {
+      fill: rgba(180, 80, 10, 0.11);
+    }
+    .mountains path:nth-child(3) {
+      fill: rgba(180, 80, 10, 0.16);
+    }
+    .mountains line {
+      stroke: rgba(180, 80, 10, 0.2);
+    }
+
+    /* ── LIGHT THEME: eyebrow ── */
+    .eyebrow {
+      color: rgba(180, 80, 10, 0.55);
+    }
+
+    /* ── LIGHT THEME: headline pre line ── */
+    .hl-pre {
+      color: rgba(42, 26, 8, 0.38);
+    }
+
+    /* ── LIGHT THEME: headline main (non-gradient) ── */
+    .hl-main {
+      color: #1a0e04;
+      text-shadow: 0 0 80px rgba(249, 115, 22, 0.08);
+    }
+
+    /* ── LIGHT THEME: fire-word gradient (richer, deeper orange) ── */
+    .hl-main .fire-word {
+      background: linear-gradient(
+        120deg,
+        #c2540a 0%,
+        #e07b10 50%,
+        #c2540a 100%
+      );
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── LIGHT THEME: headline suffix ── */
+    .hl-suffix {
+      color: rgba(42, 26, 8, 0.45);
+    }
+
+    /* ── LIGHT THEME: subtext ── */
+    .subtext {
+      color: rgba(80, 50, 20, 0.45);
+    }
+
+    /* ── LIGHT THEME: milestone trail border ── */
+    .trail-item {
+      border-right-color: rgba(180, 80, 10, 0.14);
+    }
+
+    /* ── LIGHT THEME: trail item dot (background matches page) ── */
+    .trail-item::after {
+      background: #faf3e8;
+      border-color: rgba(180, 80, 10, 0.32);
+    }
+    .trail-item:hover::after {
+      border-color: #c2540a;
+      box-shadow: 0 0 10px rgba(194, 84, 10, 0.4);
+    }
+
+    /* ── LIGHT THEME: trail titles ── */
+    [data-lvl='1'] .ti-title {
+      color: rgba(194, 84, 10, 0.75);
+    }
+    [data-lvl='2'] .ti-title {
+      color: rgba(210, 110, 20, 0.7);
+    }
+    [data-lvl='3'] .ti-title {
+      color: rgba(200, 140, 10, 0.65);
+    }
+    [data-lvl='1']:hover .ti-title {
+      color: #c2540a;
+    }
+    [data-lvl='2']:hover .ti-title {
+      color: #d06e14;
+    }
+    [data-lvl='3']:hover .ti-title {
+      color: #c88c0a;
+    }
+
+    /* ── LIGHT THEME: trail desc ── */
+    .ti-desc {
+      color: rgba(180, 80, 10, 0.3);
+    }
+    .trail-item:hover .ti-desc {
+      color: rgba(180, 80, 10, 0.55);
+    }
+
+    /* ── LIGHT THEME: trail connector ── */
+    .trail-connector {
+      background: linear-gradient(
+        to bottom,
+        rgba(180, 80, 10, 0.1),
+        rgba(180, 80, 10, 0.18)
+      );
+    }
+
+    /* ── LIGHT THEME: bottom bar ── */
+    .bottom-bar {
+      border-top-color: rgba(180, 80, 10, 0.1);
+    }
+    .bb-left {
+      color: rgba(180, 80, 10, 0.32);
+    }
+    .bb-right {
+      color: rgba(180, 80, 10, 0.26);
+    }
+    .bb-right span {
+      color: rgba(180, 80, 10, 0.55);
+    }
+  }
+</style>
+
+<script is:inline>
+  /* ── STAR FIELD ── */
+  const starCanvas = document.getElementById('starCanvas');
+  const sCtx = starCanvas.getContext('2d');
+
+  let W, H;
+  let stars = [];
+
+  function initStars() {
+    W = starCanvas.width = starCanvas.offsetWidth;
+    H = starCanvas.height = starCanvas.offsetHeight;
+    stars = [];
+    const count = Math.floor((W * H) / 5000);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H * 0.75, // keep stars in upper portion
+        r: Math.random() * 1.4 + 0.2,
+        twinkleSpeed: Math.random() * 3 + 1.5,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        drift: (Math.random() - 0.5) * 0.015,
+      });
+    }
+  }
+  initStars();
+  window.addEventListener('resize', initStars);
+
+  /* ── TRAIL CANVAS ── */
+  const trailCanvas = document.getElementById('trailCanvas');
+  const tCtx = trailCanvas.getContext('2d');
+  let trail = []; // {x,y,age,maxAge}
+
+  function resizeTrail() {
+    trailCanvas.width = trailCanvas.offsetWidth;
+    trailCanvas.height = trailCanvas.offsetHeight;
+  }
+  resizeTrail();
+  window.addEventListener('resize', resizeTrail);
+
+  // add point to trail on mouse move
+  document.addEventListener('mousemove', (e) => {
+    trail.push({ x: e.clientX, y: e.clientY, age: 0, maxAge: 38 });
+    if (trail.length > 60) trail.shift();
+  });
+
+  let t = 0;
+  function draw() {
+    requestAnimationFrame(draw);
+    t += 0.012;
+
+    /* STARS */
+    sCtx.clearRect(0, 0, W, H);
+
+    // occasional shooting star
+    if (Math.random() < 0.002) {
+      const sx = Math.random() * W * 0.6 + W * 0.1;
+      const sy = Math.random() * H * 0.4;
+      for (let i = 0; i < 28; i++) {
+        trail.push({
+          x: sx + i * 6,
+          y: sy + i * 2.5,
+          age: i * 0.8,
+          maxAge: 28,
+        });
+      }
+    }
+
+    /* MOUSE TRAIL */
+    tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+    trail.forEach((p, i) => {
+      p.age++;
+      const life = 1 - p.age / p.maxAge;
+      if (life <= 0) return;
+      const size = life * 3;
+      tCtx.beginPath();
+      tCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+      tCtx.fillStyle = `rgba(249,115,22,${life * 0.7})`;
+      tCtx.shadowBlur = life * 12;
+      tCtx.shadowColor = '#F97316';
+      tCtx.fill();
+    });
+    tCtx.shadowBlur = 0;
+    trail = trail.filter((p) => p.age < p.maxAge);
+  }
+  draw();
+</script>

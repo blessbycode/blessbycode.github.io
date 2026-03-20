@@ -1,0 +1,61 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getSortedPosts, getPostSequenceContext } from '~/utils';
+import Layout from '~/layouts/Layout.astro';
+import ArticleHead from '~/components/ArticleHead.astro';
+import RecommendedPosts from '~/components/RecommendedPosts.astro';
+import TOC from '~/components/TOC.astro';
+import ScrollToTop from '~/components/ScrollToTop.astro';
+import ScrollProgress from '~/components/ScrollProgress.astro';
+
+export const getStaticPaths = (async () => {
+  const guides = await getSortedPosts('guides');
+  return guides.map((guide) => {
+    // Get sequence context for the post
+    const { prev, next } = getPostSequenceContext(guide, guides);
+    return {
+      params: { slug: guide.id },
+      props: { guide, prev, next },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { guide, prev, next } = Astro.props;
+const { title, description, author, coverImage, tags: tagList } = guide.data;
+const { headings, Content: PostContent } = await render(guide);
+---
+
+<Layout title={title} description={description} author={author} tags={tagList}>
+  <ScrollProgress />
+  <div class="article-page">
+    <div class="container">
+      <section class="article-layout" data-pagefind-body>
+        <article>
+          <ArticleHead article={guide} />
+          {
+            coverImage && (
+              <div class="cover-image">
+                <Image
+                  priority
+                  layout="constrained"
+                  src={coverImage.src}
+                  alt={coverImage.alt}
+                  class=""
+                />
+              </div>
+            )
+          }
+          <div class="article-body">
+            <PostContent />
+          </div>
+        </article>
+        {guide.data.toc && headings.length > 0 && <TOC headings={headings} />}
+      </section>
+
+      <RecommendedPosts post={guide} prev={prev} next={next} />
+    </div>
+  </div>
+  <ScrollToTop />
+</Layout>

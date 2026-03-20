@@ -1,0 +1,61 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getSortedPosts, getPostSequenceContext } from '~/utils';
+import Layout from '~/layouts/Layout.astro';
+import ArticleHead from '~/components/ArticleHead.astro';
+import RecommendedPosts from '~/components/RecommendedPosts.astro';
+import TOC from '~/components/TOC.astro';
+import ScrollToTop from '~/components/ScrollToTop.astro';
+import ScrollProgress from '~/components/ScrollProgress.astro';
+
+export const getStaticPaths = (async () => {
+  const snippets = await getSortedPosts('snippets');
+  return snippets.map((snippet) => {
+    // Get sequence context for the post
+    const { prev, next } = getPostSequenceContext(snippet, snippets);
+    return {
+      params: { slug: snippet.id },
+      props: { snippet, prev, next },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { snippet, prev, next } = Astro.props;
+const { title, description, author, coverImage, tags: tagList } = snippet.data;
+const { headings, Content: PostContent } = await render(snippet);
+---
+
+<Layout title={title} description={description} author={author} tags={tagList}>
+  <ScrollProgress />
+  <div class="article-page">
+    <div class="container">
+      <section class="article-layout" data-pagefind-body>
+        <article>
+          <ArticleHead article={snippet} />
+          {
+            coverImage && (
+              <div class="cover-image">
+                <Image
+                  priority
+                  layout="constrained"
+                  src={coverImage.src}
+                  alt={coverImage.alt}
+                  class=""
+                />
+              </div>
+            )
+          }
+          <div class="article-body">
+            <PostContent />
+          </div>
+        </article>
+        {snippet.data.toc && headings.length > 0 && <TOC headings={headings} />}
+      </section>
+
+      <RecommendedPosts post={snippet} prev={prev} next={next} />
+    </div>
+  </div>
+  <ScrollToTop />
+</Layout>

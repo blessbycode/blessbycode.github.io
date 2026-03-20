@@ -1,0 +1,53 @@
+---
+import IconChevronsLeft from '~/icons/chevrons-left.svg';
+import IconChevronsRight from '~/icons/chevrons-right.svg';
+
+interface Props {
+  prevLink?: string;
+  prevText?: string;
+  nextLink?: string;
+  nextText?: string;
+}
+
+const { prevLink, prevText, nextLink, nextText } = Astro.props;
+---
+
+<div class="pagination">
+  {
+    prevLink && (
+      <a
+        class="prev-page btn-outline"
+        href={prevLink}
+        aria-label="Previous Page"
+      >
+        <IconChevronsLeft class="" />
+        {prevText || 'Previous'}
+      </a>
+    )
+  }
+  {
+    nextLink && (
+      <a class="next-page btn-outline" href={nextLink} aria-label="Next Page">
+        {nextText || 'Next'}
+        <IconChevronsRight class="" />
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-block: 1.6rem;
+
+    a {
+      font-family: var(--font-primary);
+      font-size: var(--text-md);
+    }
+  }
+
+  .pagination:has(a:only-child:where(.next-page)) {
+    justify-content: flex-end;
+  }
+</style>

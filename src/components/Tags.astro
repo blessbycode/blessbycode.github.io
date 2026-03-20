@@ -1,0 +1,52 @@
+---
+import type { Collation, PostType } from '~/types';
+
+interface Props {
+  tags: Collation<PostType>[];
+  showAll: boolean;
+}
+
+const { tags, showAll } = Astro.props;
+
+const top3Tags = tags && tags.slice(0, 3);
+const allTags = tags && [...tags];
+---
+
+{
+  showAll
+    ? allTags.map((tag) => (
+        <a href={tag.url} class="card-tag">
+          {tag.title}
+        </a>
+      ))
+    : top3Tags.map((tag) => (
+        <a href={tag.url} class="card-tag">
+          {tag.title}
+        </a>
+      ))
+}
+
+<style>
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: capitalize;
+    background: var(--accent-primary-muted);
+    color: var(--accent-primary);
+    border: 1px solid var(--tag-border-color);
+    transition: all var(--transition);
+
+    &:hover {
+      background: var(--grad-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+</style>

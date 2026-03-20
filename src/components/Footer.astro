@@ -1,0 +1,97 @@
+---
+import siteConfig from '~/site.config';
+import Logo from './Logo.astro';
+import SocialLinks from './SocialLinks.astro';
+
+const currentYear = new Date().getFullYear().toString();
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo"><Logo /></div>
+      <p class="footer-desc">Real-world deep dives on the modern web stack.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-links">
+        <SocialLinks socialLinks={siteConfig.socialLinks} />
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">
+      <span class="footer-copy">
+        {siteConfig.author} © {currentYear} · Built with Astro, TypeScript & ☕</span
+      >
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: var(--border-subtle);
+    padding: var(--space-12) 0;
+    margin-top: var(--space-6);
+  }
+
+  .footer-inner {
+    display: grid;
+    /* grid-template-columns: 1fr 1fr; */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-10);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+  }
+
+  .footer-logo {
+    font-family: var(--font-primary);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-4);
+    display: inline-block;
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer-desc {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    line-height: var(--leading-relaxed);
+    max-width: 260px;
+  }
+
+  .footer-col-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-5);
+  }
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .footer-bottom {
+    border-top: var(--border-subtle);
+    padding: var(--space-6) 0 0;
+    margin-top: var(--space-10);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+</style>

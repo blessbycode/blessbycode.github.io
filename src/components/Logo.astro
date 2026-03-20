@@ -1,0 +1,38 @@
+---
+import siteConfig from '~/site.config';
+import IconLogo from '~/icons/logo.svg';
+---
+
+<a id="logo" href="/" class="logo">
+  <IconLogo id="icon-light" class="icon-logo" />
+  <span>
+    {siteConfig.title}
+  </span>
+</a>
+
+<style>
+  .logo {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-primary);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    span {
+      background: var(--grad-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .icon-logo {
+    width: var(--space-8);
+    height: var(--space-8);
+    margin-right: 0.4rem;
+    mask-image: var(--grad-brand);
+  }
+</style>

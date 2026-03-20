@@ -1,0 +1,48 @@
+{
+  "name": "blessbycode",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "postbuild": "pagefind --site dist",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^6.3.10",
+    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/rss": "^4.0.15",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/ts-plugin": "^1.10.6",
+    "@fontsource-variable/cormorant-garamond": "^5.2.6",
+    "@fontsource-variable/dm-sans": "^5.2.8",
+    "@fontsource/dm-mono": "^5.2.7",
+    "@pagefind/default-ui": "^1.4.0",
+    "astro": "^5.17.1",
+    "astro-expressive-code": "^0.41.6",
+    "astro-icon": "^1.1.5",
+    "expressive-code-color-chips": "^0.1.4",
+    "expressive-code-language-badge": "^1.1.0",
+    "gemoji": "^8.1.0",
+    "hastscript": "^9.0.1",
+    "katex": "^0.16.33",
+    "mdast": "^2.3.2",
+    "mdast-util-to-string": "^4.0.0",
+    "pagefind": "^1.4.0",
+    "reading-time": "^1.5.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-external-links": "^3.0.0",
+    "rehype-katex": "^7.0.1",
+    "remark-directive": "^4.0.0",
+    "remark-math": "^6.0.0",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@iconify-json/logos": "^1.2.10",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}

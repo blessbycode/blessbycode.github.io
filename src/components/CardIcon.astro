@@ -1,0 +1,28 @@
+---
+import { Icon } from 'astro-icon/components';
+import IconNoImage from '~/icons/no-image.svg';
+
+interface Props {
+  icons: string[];
+}
+
+const { icons } = Astro.props;
+---
+
+{
+  icons && icons.length > 0 ? (
+    icons.map((icon) => <Icon name={`logos:${icon}`} />)
+  ) : (
+    <IconNoImage class="no-image" />
+  )
+}
+
+<style>
+  .art-logo {
+    width: var(--space-20);
+    height: var(--space-20);
+    position: relative;
+    z-index: 1;
+    opacity: 0.88;
+  }
+</style>

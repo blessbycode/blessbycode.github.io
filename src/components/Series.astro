@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { PostType, Collation } from '~/types';
+import { SeriesGroup } from '~/utils';
+
+interface Props {
+  post: CollectionEntry<PostType>;
+  verbose: boolean;
+}
+
+const { post, verbose = false } = Astro.props;
+
+const seriesFrontmatter = post.data.series;
+let series: Collation<PostType> | undefined;
+let seriesPostNumber: number | undefined;
+let seriesTotal: number | undefined;
+if (seriesFrontmatter) {
+  const seriesGroup = await SeriesGroup.build();
+  series = seriesGroup.match(seriesFrontmatter);
+  if (!series) {
+    // This should never happen if the series data is correct
+    throw new Error(`Series "${seriesFrontmatter}" not found`);
+  }
+  seriesPostNumber = series.entries.findIndex((p) => p.id === post.id) + 1;
+  seriesTotal = series.entries.length;
+}
+---
+
+{
+  series && seriesPostNumber && seriesTotal && (
+    <a class="series" href={series.url}>
+      {verbose
+        ? `Series - ${series.title} (Part ${seriesPostNumber} of ${seriesTotal})`
+        : `${series.title}`}
+    </a>
+  )
+}

@@ -1,0 +1,48 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '~/layouts/Layout.astro';
+import { TagsGroup } from '~/utils';
+import Pagination from '~/components/Pagination.astro';
+import Card from '~/components/Card.astro';
+import siteConfig from '~/site.config';
+import HeroTags from '~/components/HeroTags.astro';
+import SectionHeader from '~/components/SectionHeader.astro';
+
+// Note: Pagination like '/', '/2', '/3' only works with spread param like [...page]
+export const getStaticPaths = (async ({ paginate }) => {
+  const tagsGroup = await TagsGroup.build();
+  const pages = tagsGroup.collations.flatMap((tags) => {
+    // Use flatMap to lift the posts for each tag into a single array
+    return paginate(tags.entries.reverse(), {
+      props: { tagTitle: tags.title },
+      params: { tag: tags.titleSlug },
+      pageSize: siteConfig.pageSize,
+    });
+  });
+  return pages;
+}) satisfies GetStaticPaths;
+
+const { page, tagTitle } = Astro.props;
+const pageTitle =
+  `Tag: ${tagTitle}` +
+  (page.currentPage > 1 ? ` - Page ${page.currentPage}` : '');
+---
+
+<Layout title={pageTitle} description={`All posts tagged with ${tagTitle}`}>
+  <HeroTags />
+  <section class="content-section">
+    <div class="container">
+      <SectionHeader name="Tags">{tagTitle}</SectionHeader>
+
+      <main class="article-grid">
+        {page.data.map((post) => <Card post={post} />)}
+      </main>
+      <Pagination
+        prevLink={page.url.prev ? page.url.prev : undefined}
+        prevText="Newer Snippets"
+        nextLink={page.url.next ? page.url.next : undefined}
+        nextText="Older Snippets"
+      />
+    </div>
+  </section>
+</Layout>

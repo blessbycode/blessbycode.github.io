@@ -1,0 +1,124 @@
+---
+import DateTime from '~/components/DateTime.astro';
+import Tags from '~/components/Tags.astro';
+import type { Collation, PostType } from '~/types';
+import { TagsGroup } from '~/utils';
+import Series from './Series.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  article: CollectionEntry<PostType>;
+}
+
+const { article } = Astro.props;
+
+let tags: Collation<'articles'>[] | undefined;
+if (article.data.tags && article.data.tags.length > 0) {
+  const tagsGroup = await TagsGroup.build();
+  tags = tagsGroup.matchMany(article.data.tags);
+}
+---
+
+<div class="article-head">
+  <h2 id={article.id} class="article-title">
+    {article.data.title}
+  </h2>
+
+  <p class="article-subtitle">{article.data.description}</p>
+
+  <div class="article-chips-row">
+    {
+      tags && (
+        <div class="card-tags">
+          <Tags tags={tags} showAll={false} />
+        </div>
+      )
+    }
+
+    {
+      article.data.series && (
+        <span class="series-chip">
+          <Series post={article} verbose={true} />
+        </span>
+      )
+    }
+  </div>
+
+  <div class="article-meta">
+    <DateTime post={article} shouldTextVisible={true} />
+  </div>
+</div>
+
+<style>
+  .article-head {
+    margin-bottom: var(--space-10);
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding-top: var(--space-5);
+    border-top: var(--border-subtle);
+  }
+
+  .article-title {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-family: var(--font-primary);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-6);
+  }
+
+  .article-subtitle {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text-muted);
+    line-height: var(--leading-relaxed);
+    max-width: calc(var(--space-17) * 10);
+    margin-bottom: var(--space-7);
+  }
+
+  .article-chips-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-6);
+  }
+
+  .series-chip {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: capitalize;
+    color: var(--text-muted);
+    padding: var(--space-1) 10px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--bg-border);
+    background: var(--bg-surface);
+    white-space: nowrap;
+    transition: all var(--transition);
+
+    &:hover {
+      background: var(--grad-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 100%;
+      background: var(--grad-brand);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+</style>

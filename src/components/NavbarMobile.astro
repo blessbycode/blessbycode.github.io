@@ -1,0 +1,33 @@
+---
+import siteConfig from '~/site.config';
+import Navlink from './Navlink.astro';
+---
+
+<nav class="mobile-nav" id="mobile-nav">
+  {siteConfig.navLinks.map((link) => <Navlink link={link} />)}
+</nav>
+
+<style>
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: var(--bg-base);
+    flex-direction: column;
+    padding: var(--space-6);
+    padding-top: var(--space-20);
+    gap: var(--space-2);
+
+    &.open {
+      display: flex;
+    }
+
+    .nav-link {
+      font-size: var(--text-lg);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-lg);
+      display: block;
+    }
+  }
+</style>

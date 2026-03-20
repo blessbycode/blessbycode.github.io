@@ -1,0 +1,63 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import type { PostType } from '~/types';
+import { formattedDate } from '~/utils';
+
+interface Props {
+  post: CollectionEntry<PostType>;
+  shouldTextVisible?: boolean;
+}
+
+const { post, shouldTextVisible } = Astro.props;
+
+const { remarkPluginFrontmatter } = await render(post);
+const { minutesRead } = remarkPluginFrontmatter;
+
+const date = post.data.updated
+  ? formattedDate(post.data.updated)
+  : formattedDate(post.data.published);
+
+const showStatus = (post: CollectionEntry<PostType>) => {
+  if (shouldTextVisible) {
+    if (post.data.updated) {
+      return 'Updated on';
+    } else {
+      return 'Published on';
+    }
+  } else {
+    return '';
+  }
+};
+---
+
+<time datetime={date}>{showStatus(post)} {date}</time>
+<span class="separator"></span>
+<span class="read-time"> ⏱️ {minutesRead} read</span>
+
+<style>
+  time {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-wide);
+  }
+  .separator {
+    width: 1px;
+    height: 14px;
+    background: var(--bg-border-strong);
+    margin: 0 var(--space-5);
+    flex-shrink: 0;
+  }
+
+  .read-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getSortedPosts } from '~/utils';
+import siteConfig from '~/site.config';
+import Card from '~/components/Card.astro';
+import Pagination from '~/components/Pagination.astro';
+import Layout from '~/layouts/Layout.astro';
+import HeroArticles from '~/components/HeroArticles.astro';
+import SectionHeader from '~/components/SectionHeader.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const sortedArticles = await getSortedPosts('articles');
+  return paginate(sortedArticles.reverse(), { pageSize: siteConfig.pageSize });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const pageTitle =
+  'Articles' + (page.currentPage > 1 ? ` - Page ${page.currentPage}` : '');
+---
+
+<Layout title={pageTitle} description="All Articles in the archive">
+  <HeroArticles />
+  <section class="content-section">
+    <div class="container">
+      <SectionHeader name="Archive">All Articles</SectionHeader>
+
+      <main class="article-grid">
+        {page.data.map((post) => <Card post={post} />)}
+      </main>
+      <Pagination
+        prevLink={page.url.prev ? page.url.prev : undefined}
+        prevText="Newer Articles"
+        nextLink={page.url.next ? page.url.next : undefined}
+        nextText="Older Articles"
+      />
+    </div>
+  </section>
+</Layout>

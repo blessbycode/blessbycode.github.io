@@ -1,0 +1,347 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import CardIcon from './CardIcon.astro';
+import type { PostType, Collation } from '~/types';
+import { formattedDate, TagsGroup } from '~/utils';
+import Tags from './Tags.astro';
+import Series from './Series.astro';
+
+interface Props {
+  post: CollectionEntry<PostType>;
+}
+
+const { post } = Astro.props;
+
+const tech = post.data && post.data.tech ? post.data.tech : '';
+const artClass = post.data && post.data.tech ? `art-${tech}` : '';
+const cardGlow =
+  post.data && post.data.tech ? `--card-glow:var(--glow-${tech})` : '';
+
+const date = post.data.updated
+  ? formattedDate(post.data.updated)
+  : formattedDate(post.data.published);
+
+const { remarkPluginFrontmatter } = await render(post);
+const { minutesRead } = remarkPluginFrontmatter;
+const description =
+  remarkPluginFrontmatter.description || post.data.description;
+
+let tags: Collation<PostType>[] | undefined = [];
+if (post.data.tags && post.data.tags.length > 0) {
+  const tagsGroup = await TagsGroup.build();
+  tags = tagsGroup.matchMany(post.data.tags);
+}
+
+const samePage = Astro.url.pathname === `/${post.collection}${post.id}`;
+const articleLink = samePage ? `#${post.id}` : `/${post.collection}/${post.id}`;
+---
+
+<div class="article-card fade-up">
+  <div class=`article-card__art ${artClass}` style={cardGlow}>
+    <div class="icon-shell">
+      <CardIcon icons={post.data.icons} />
+    </div>
+  </div>
+
+  <div class="article-card__body">
+    <div class="card-tags">
+      <Tags tags={tags} showAll={false} />
+    </div>
+    <h3 class="article-card__title">
+      <a href={articleLink}>{post.data.title}</a>
+    </h3>
+    {description && <p class="article-card__excerpt">{description}</p>}
+    <div class="article-card__footer">
+      <div class="card-meta">
+        <time datetime={date}>{date}</time>
+        {
+          post.data.series ? (
+            <>
+              {' '}
+              <span class="meta-dot" />
+              <span class="article-series">
+                <Series post={post} verbose={false} />
+              </span>
+            </>
+          ) : (
+            ''
+          )
+        }
+      </div>
+      <span class="reading-time">📖 {minutesRead}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .article-card {
+    background: var(--bg-surface);
+    border: var(--border-subtle);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition),
+      border-color var(--transition),
+      background var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .article-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--grad-card-hover);
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    border-color: transparent;
+  }
+
+  .article-card:hover::before {
+    opacity: 1;
+  }
+
+  .article-card__art {
+    height: calc(var(--space-5) * 10);
+    border-bottom: var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .art-ts {
+    background: var(--art-ts);
+  }
+
+  .art-react {
+    background: var(--art-react);
+  }
+
+  .art-astro {
+    background: var(--art-astro);
+  }
+
+  .art-node {
+    background: var(--art-node);
+  }
+
+  .art-python {
+    background: var(--art-python);
+  }
+
+  .art-mongo {
+    background: var(--art-mongo);
+  }
+
+  .art-angular {
+    background: var(--art-angular);
+  }
+
+  .art-next {
+    background: var(--art-next);
+  }
+
+  .art-css {
+    background: var(--art-css);
+  }
+
+  .art-js {
+    background: var(--art-js);
+  }
+
+  .art-html {
+    background: var(--art-html);
+  }
+
+  .icon-shell {
+    width: var(--space-20);
+    height: var(--space-20);
+    padding: 10px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(var(--space-2));
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: box-shadow 0.38s ease;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .article-card:hover .icon-shell {
+    box-shadow:
+      0 8px 32px var(--card-glow),
+      0 0 0 1px rgba(255, 255, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .article-card__body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .article-card__title {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+    transition: color var(--transition);
+  }
+
+  .article-card:hover .article-card__title,
+  .article-card:hover .article-series {
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .article-card__excerpt {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    line-height: var(--leading-relaxed);
+    flex: 1;
+    transition: color var(--transition);
+  }
+
+  .article-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-4);
+    border-top: var(--border-subtle);
+    margin-top: auto;
+  }
+
+  .reading-time {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .art-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(var(--space-7));
+    opacity: 0.4;
+    width: var(--space-25);
+    height: var(--space-25);
+    top: 10%;
+    left: 20%;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+
+  .meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--bg-border-strong);
+    flex-shrink: 0;
+  }
+
+  .article-series {
+    text-transform: capitalize;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-up {
+    animation: fadeUp 0.6s cubic-bezier(0, 0, 0.2, 1) both;
+  }
+
+  .fade-up:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .fade-up:nth-child(2) {
+    animation-delay: 0.13s;
+  }
+
+  .fade-up:nth-child(3) {
+    animation-delay: 0.21s;
+  }
+
+  .fade-up:nth-child(4) {
+    animation-delay: 0.29s;
+  }
+
+  .fade-up:nth-child(5) {
+    animation-delay: 0.37s;
+  }
+
+  .fade-up:nth-child(6) {
+    animation-delay: 0.45s;
+  }
+
+  .fade-up:nth-child(7) {
+    animation-delay: 0.53s;
+  }
+
+  .fade-up:nth-child(8) {
+    animation-delay: 1.02s;
+  }
+
+  .fade-up:nth-child(9) {
+    animation-delay: 1.11s;
+  }
+
+  .fade-up:nth-child(10) {
+    animation-delay: 1.2s;
+  }
+</style>

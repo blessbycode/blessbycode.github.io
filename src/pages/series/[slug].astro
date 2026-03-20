@@ -1,0 +1,36 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '~/layouts/Layout.astro';
+import { SeriesGroup } from '~/utils';
+import Card from '~/components/Card.astro';
+import HeroSeries from '~/components/HeroSeries.astro';
+import SectionHeader from '~/components/SectionHeader.astro';
+
+export const getStaticPaths = (async () => {
+  const seriesGroup = await SeriesGroup.build();
+  return seriesGroup.collations.map((series) => {
+    return {
+      params: { slug: series.titleSlug },
+      props: { posts: series.entries, seriesTitle: series.title },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { posts, seriesTitle } = Astro.props;
+---
+
+<Layout
+  title={`Series: ${seriesTitle}`}
+  description={`All posts in the ${seriesTitle} series`}
+>
+  <HeroSeries />
+  <section class="content-section">
+    <div class="container">
+      <SectionHeader name="Series">{seriesTitle}</SectionHeader>
+
+      <main class="article-grid">
+        {posts.map((post) => <Card post={post} />)}
+      </main>
+    </div>
+  </section>
+</Layout>

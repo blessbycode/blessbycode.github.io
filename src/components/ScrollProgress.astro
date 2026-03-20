@@ -1,0 +1,53 @@
+---
+
+---
+
+<div class="progress-bar"></div>
+
+<style>
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%; /* Initial width */
+    height: 2px; /* Thickness */
+    background: var(--grad-brand); /* Customize color */
+    z-index: 9999;
+    transition: width 0.1s ease-out; /* Smooth movement */
+  }
+</style>
+
+<script>
+  function updateProgress() {
+    const progressBar = document.querySelector(
+      '.progress-bar',
+    ) as HTMLElement | null;
+    if (!progressBar) return;
+
+    const winScroll =
+      document.body.scrollTop || document.documentElement.scrollTop;
+    const height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    progressBar.style.width = scrolled + '%';
+  }
+
+  let ticking = false;
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateProgress();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', updateProgress);
+
+  updateProgress();
+</script>

@@ -1,0 +1,32 @@
+For logo names and other details:
+https://icon-sets.iconify.design/logos/?category=Logos
+
+For logo names and other details:
+https://icon-sets.iconify.design/ph/?category=UI+Other+%2F+Mixed+Grid
+
+For Icon component used in the project:
+https://github.com/natemoo-re/astro-icon
+
+Name of the mostly needed icons:
+angular-icon
+react
+graphql
+nodejs-icon-alt
+mongodb-icon
+javascript
+typescript-icon
+html-5
+css-3
+tailwindcss-icon
+astro-icon
+markdown
+python
+matplotlib-icon
+seaborn-icon
+numpy
+pandas-icon
+postgresql
+mysql-icon
+webpack
+docker-icon
+kubernetes

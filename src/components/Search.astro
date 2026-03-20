@@ -1,0 +1,363 @@
+---
+import '@pagefind/default-ui/css/ui.css';
+import IconCircleX from '~/icons/circle-x.svg';
+import IconSearch from '~/icons/search.svg';
+import IconWarning from '~/icons/warning.svg';
+
+const { trailingSlashes = false } = Astro.props;
+---
+
+<site-search class="" id="search" data-trailing-slashes={trailingSlashes}>
+  <button
+    class="search-btn"
+    aria-keyshortcuts="Control+K Meta+K"
+    data-open-modal
+    disabled
+  >
+    <span class="search-icon">
+      <IconSearch />
+    </span>
+    <span class="search-label">Search...</span>
+    <kbd class="search-shortcut">⌘K</kbd>
+  </button>
+  <dialog aria-label="search" class="search-backdrop">
+    <div class="dialog-frame">
+      <button class="close-backdrop" data-close-modal>
+        <IconCircleX class="" />
+      </button>
+      {
+        import.meta.env.DEV ? (
+          <div class="warning-text">
+            <i class="icon-warning">
+              <IconWarning />
+            </i>
+            <p>
+              Search is only available in production builds. <br />
+              Try building and previewing the site to test it out locally.
+            </p>
+          </div>
+        ) : (
+          <div class="search-container">
+            <div id="pagefind-search" />
+          </div>
+        )
+      }
+    </div>
+  </dialog>
+</site-search>
+
+<style is:global>
+  @media (max-width: 640px) {
+    site-search {
+      display: none;
+    }
+  }
+
+  .search-backdrop {
+    color: var(--text-primary) !important;
+    min-height: 20rem;
+    height: 80%;
+    width: 80%;
+    margin: auto;
+
+    &::backdrop {
+      box-sizing: border-box;
+      background-color: rgba(0, 0, 0, 0.85);
+      height: 100vh;
+      width: 100vw;
+      backdrop-filter: blur(15px);
+    }
+
+    &:open {
+      display: flex;
+      background: none;
+      border: none;
+    }
+  }
+
+  .dialog-frame {
+    padding: 2rem;
+    border: 4px double
+      color-mix(in oklab, var(--accent-primary) 70%, transparent);
+    border-radius: 1rem;
+    flex: 1;
+    max-width: 100%;
+    overflow-y: auto;
+  }
+
+  .warning-text {
+    color: var(--accent-primary);
+    p {
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+    }
+  }
+
+  .icon-warning {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5rem;
+
+    svg {
+      width: 10rem;
+      height: 10rem;
+      opacity: 0.9;
+    }
+  }
+
+  .close-backdrop {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    opacity: 0.6;
+    color: var(--accent-primary);
+    transition: var(--transition);
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .search-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-elevated);
+    border: var(--border-default);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  html[data-theme='github-light'] {
+    .search-btn {
+      &:hover {
+        color: var(--accent-primary);
+        background-color: color-mix(
+          in oklab,
+          var(--gray-dark) 90%,
+          transparent
+        );
+      }
+    }
+
+    .search-backdrop {
+      &::backdrop {
+        background-color: rgba(255, 255, 255, 0.85);
+      }
+    }
+  }
+
+  .search-icon {
+    width: var(--text-lg);
+    height: var(--text-lg);
+    margin-right: var(--space-1);
+  }
+
+  .search-shortcut {
+    background: var(--bg-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+
+  :root {
+    --pagefind-ui-font: inherit;
+    --pagefind-ui-primary: var(--accent-primary);
+    --pagefind-ui-text: var(--text-primary);
+    --pagefind-ui-background: var(--bg-overlay);
+    --pagefind-ui-border: var(--accent-primary);
+    --pagefind-ui-border-width: 2px;
+  }
+
+  .pagefind-ui__search-input:active,
+  .pagefind-ui__search-input:focus-visible {
+    outline-style: solid;
+    outline-offset: 2px;
+    outline-width: 1px;
+    outline-color: var(--accent-primary);
+  }
+
+  .pagefind-ui__results-area {
+    margin: 16px 0;
+  }
+  .pagefind-ui__result {
+    overflow-x: scroll !important;
+  }
+
+  .pagefind-ui__result-inner {
+    max-width: 100% !important;
+  }
+
+  .pagefind-ui__result-inner mark {
+    background-color: var(--accent-primary) !important;
+    color: var(--bg-overlay) !important;
+    font-weight: 600 !important;
+    padding: 0 3px !important;
+    border-radius: 6px !important;
+  }
+
+  .pagefind-ui__result-nested .pagefind-ui__result-link:before {
+    content: '>' !important;
+    left: -16px !important;
+    right: unset !important;
+    color: var(--accent-primary) !important;
+    font-weight: 600 !important;
+  }
+</style>
+
+<script>
+  class SiteSearch extends HTMLElement {
+    #closeBtn: HTMLButtonElement | null;
+    #dialog: HTMLDialogElement | null;
+    #dialogFrame: HTMLDivElement | null;
+    #openBtn: HTMLButtonElement | null;
+    #controller: AbortController;
+    trailingSlashes: boolean;
+    stripTrailingSlash: (path: string) => string;
+    formatURL: (path: string) => string;
+
+    constructor() {
+      super();
+      this.#openBtn = this.querySelector<HTMLButtonElement>(
+        'button[data-open-modal]',
+      );
+      this.#closeBtn = this.querySelector<HTMLButtonElement>(
+        'button[data-close-modal]',
+      );
+      this.#dialog = this.querySelector<HTMLDialogElement>('dialog');
+      this.#dialogFrame = this.querySelector('.dialog-frame');
+      this.#controller = new AbortController();
+
+      this.trailingSlashes =
+        this.dataset.trailingSlashes === 'true' ? true : false;
+      this.stripTrailingSlash = (path: string) =>
+        path.replace(/(.)\/(#.*)?$/, '$1$2');
+      this.formatURL = !this.trailingSlashes
+        ? this.stripTrailingSlash
+        : (path: string) => path;
+
+      // Set up events
+      if (this.#openBtn) {
+        this.#openBtn.addEventListener('click', this.openModal);
+        this.#openBtn.disabled = false;
+      } else {
+        console.warn('Search button not found');
+      }
+
+      if (this.#closeBtn) {
+        this.#closeBtn.addEventListener('click', this.closeModal);
+      } else {
+        console.warn('Close button not found');
+      }
+
+      if (this.#dialog) {
+        this.#dialog.addEventListener('close', () => {
+          window.removeEventListener('click', this.onWindowClick);
+          const body = document.querySelector('body');
+          body?.classList.remove('overflow-hidden');
+        });
+      } else {
+        console.warn('Dialog not found');
+      }
+
+      // only add pagefind in production
+      if (import.meta.env.DEV) return;
+      const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+      onIdle(async () => {
+        const { PagefindUI } = await import('@pagefind/default-ui');
+
+        new PagefindUI({
+          baseUrl: import.meta.env.BASE_URL,
+          bundlePath:
+            import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
+          element: '#pagefind-search',
+          showImages: false,
+          showSubResults: true,
+          processResult: (result: {
+            url: string;
+            sub_results: Array<{ url: string }>;
+          }) => {
+            // Ensure links in search results match the trailing slashes setting
+            result.url = this.formatURL(result.url);
+
+            result.sub_results = result.sub_results.map((res) => {
+              res.url = this.formatURL(res.url);
+              return res;
+            });
+
+            return result;
+          },
+        });
+      });
+    }
+
+    connectedCallback() {
+      // window events, requires cleanup
+      window.addEventListener('keydown', this.onWindowKeydown, {
+        signal: this.#controller.signal,
+      });
+    }
+
+    disconnectedCallback() {
+      this.#controller.abort();
+    }
+
+    openModal = (event?: MouseEvent) => {
+      if (!this.#dialog) {
+        console.warn('Dialog not found');
+        return;
+      }
+
+      const body = document.querySelector('body');
+      body?.classList.add('overflow-hidden');
+
+      this.#dialog.showModal();
+      this.querySelector('input')?.focus();
+      event?.stopPropagation();
+      window.addEventListener('click', this.onWindowClick, {
+        signal: this.#controller.signal,
+      });
+    };
+
+    closeModal = () => {
+      this.#dialog?.close();
+    };
+
+    onWindowClick = (event: MouseEvent) => {
+      // check if it's a link
+      const isLink = 'href' in (event.target || {});
+      // make sure the click is either a link or outside of the dialog
+      if (
+        isLink ||
+        (document.body.contains(event.target as Node) &&
+          !this.#dialogFrame?.contains(event.target as Node))
+      ) {
+        this.closeModal();
+      }
+    };
+
+    onWindowKeydown = (e: KeyboardEvent) => {
+      if (!this.#dialog) {
+        console.warn('Dialog not found');
+        return;
+      }
+      // check if it's the Control+K or ⌘+K shortcut
+      if ((e.metaKey === true || e.ctrlKey === true) && e.key === 'k') {
+        this.#dialog.open ? this.closeModal() : this.openModal();
+        e.preventDefault();
+      }
+    };
+  }
+
+  customElements.define('site-search', SiteSearch);
+</script>

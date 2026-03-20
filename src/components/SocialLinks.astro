@@ -1,0 +1,77 @@
+---
+import type { SocialLinks } from '~/types';
+
+interface Props {
+  socialLinks: SocialLinks;
+}
+
+const { socialLinks } = Astro.props;
+---
+
+{
+  socialLinks.mastodon && (
+    <a
+      href={socialLinks.mastodon}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-link"
+    >
+      Mastodon
+    </a>
+  )
+}
+{
+  socialLinks.x && (
+    <a
+      href={socialLinks.x}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-link"
+    >
+      X
+    </a>
+  )
+}
+{
+  socialLinks.bluesky && (
+    <a
+      href={socialLinks.bluesky}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-link"
+    >
+      Bluesky
+    </a>
+  )
+}
+{
+  socialLinks.email && (
+    <a
+      href={`mailto:${socialLinks.email}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-link"
+    >
+      Email
+    </a>
+  )
+}
+{
+  socialLinks.rss && (
+    <a href="/rss.xml" class="social-link">
+      RSS
+    </a>
+  )
+}
+
+<style>
+  .social-link {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    transition: color var(--transition);
+  }
+
+  .social-link:hover {
+    color: var(--accent-primary);
+  }
+</style>

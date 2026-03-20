@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getSortedPosts } from '~/utils';
+import siteConfig from '~/site.config';
+import Layout from '~/layouts/Layout.astro';
+import Card from '~/components/Card.astro';
+import Pagination from '~/components/Pagination.astro';
+import HeroGuides from '~/components/HeroGuides.astro';
+import SectionHeader from '~/components/SectionHeader.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const sortedGuides = await getSortedPosts('guides');
+  return paginate(sortedGuides.reverse(), { pageSize: siteConfig.pageSize });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const pageTitle =
+  'Guides' + (page.currentPage > 1 ? ` - Page ${page.currentPage}` : '');
+---
+
+<Layout title={pageTitle} description="All Guides in the archive">
+  <HeroGuides />
+  <section class="content-section">
+    <div class="container">
+      <SectionHeader name="Archive">All Guides</SectionHeader>
+
+      <main class="article-grid">
+        {page.data.map((post) => <Card post={post} />)}
+      </main>
+      <Pagination
+        prevLink={page.url.prev ? page.url.prev : undefined}
+        prevText="Newer Guides"
+        nextLink={page.url.next ? page.url.next : undefined}
+        nextText="Older Guides"
+      />
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,32 @@
+---
+import { getSortedPosts } from '~/utils';
+import Card from './Card.astro';
+import SectionHeader from './SectionHeader.astro';
+
+const sortedArticles = await getSortedPosts('articles');
+const sortedSnippets = await getSortedPosts('snippets');
+const sortedGuides = await getSortedPosts('guides');
+
+const latestAdditions = [...sortedArticles, ...sortedSnippets, ...sortedGuides];
+
+const getMillis = (date: Date) => new Date(date).getTime();
+---
+
+<div class="content-section">
+  <div class="container">
+    <SectionHeader name="Featured">Latest Additions</SectionHeader>
+    <section class="article-grid">
+      {
+        latestAdditions
+          .sort(
+            (a, b) =>
+              getMillis(a.data.published as Date) -
+              getMillis(b.data.published as Date),
+          )
+          .reverse()
+          .slice(0, 12)
+          .map((post) => <Card post={post} />)
+      }
+    </section>
+  </div>
+</div>

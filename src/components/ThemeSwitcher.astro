@@ -1,0 +1,87 @@
+---
+import IconSun from '~/icons/sun.svg';
+import IconMoon from '~/icons/moon.svg';
+---
+
+<button id="btn-theme-switcher" class="theme-switcher">
+  <IconSun id="icon-light" class="hidden" />
+  <IconMoon id="icon-dark" class="hidden" />
+</button>
+
+<style>
+  .theme-switcher {
+    width: var(--text-4xl);
+    height: var(--text-4xl);
+    border-radius: var(--radius-full);
+    background: var(--bg-elevated);
+    border: var(--border-default);
+    color: var(--text-secondary);
+    font-size: var(--text-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+
+    svg {
+      width: var(--text-2xl);
+      height: var(--text-2xl);
+    }
+  }
+</style>
+
+<script>
+  let currentTheme = localStorage.getItem('data-theme') as string;
+  const themeButton = document.getElementById('btn-theme-switcher');
+  const lightIcon = themeButton?.querySelector('#icon-light');
+  const darkIcon = themeButton?.querySelector('#icon-dark');
+
+  const darkTheme = 'github-dark-dimmed';
+  const lightTheme = 'github-light';
+
+  const setDarkTheme = () => {
+    localStorage.setItem('data-theme', darkTheme);
+    darkIcon?.classList.add('hidden');
+    lightIcon?.classList.remove('hidden');
+  };
+
+  const setLightTheme = () => {
+    localStorage.setItem('data-theme', lightTheme);
+    darkIcon?.classList.remove('hidden');
+    lightIcon?.classList.add('hidden');
+  };
+
+  const setThemeonLoad = () => {
+    if (!currentTheme) {
+      setDarkTheme();
+    } else if (currentTheme === lightTheme) {
+      setLightTheme();
+    } else {
+      setDarkTheme();
+    }
+  };
+
+  const setTheme = () => {
+    if (currentTheme === darkTheme) {
+      currentTheme = lightTheme;
+      setLightTheme();
+    } else {
+      currentTheme = darkTheme;
+      setDarkTheme();
+    }
+  };
+
+  const setThemeOnRoot = (theme: string) => {
+    const htmlTag = document.documentElement; // get html tag
+    htmlTag.setAttribute('data-theme', theme);
+  };
+
+  // setTheme();
+  setThemeonLoad();
+  setThemeOnRoot(currentTheme);
+
+  themeButton?.addEventListener('click', () => {
+    setTheme();
+    setThemeOnRoot(currentTheme);
+  });
+</script>

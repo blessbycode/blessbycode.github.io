@@ -1,0 +1,43 @@
+---
+import type { NavLink } from '~/types';
+
+interface Props {
+  link: NavLink;
+}
+
+const { link } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const isActive = (pathName: string) => pathname.split('/')[1] === pathName;
+---
+
+<a
+  class:list={[
+    'nav-link',
+    {
+      active: isActive(link.pathName),
+    },
+  ]}
+  rel={link.external ? 'noopener noreferrer' : undefined}
+  target={link.external ? '_blank' : undefined}
+  href={link.url}
+>
+  {link.name}
+</a>
+
+<style>
+  .nav-link {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    color: var(--text-muted);
+    transition: all var(--transition);
+
+    &:hover,
+    &.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+  }
+</style>

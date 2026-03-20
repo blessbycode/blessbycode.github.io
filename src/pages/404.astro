@@ -1,0 +1,317 @@
+---
+import Layout from '~/layouts/Layout.astro';
+---
+
+<Layout title="404 Error" description="Not Found">
+  <main class="banner-404">
+    <div class="ruled"></div>
+    <div class="grain"></div>
+
+    <!-- jagged SVG tear seam across the midpoint -->
+    <svg
+      class="tear-svg"
+      viewBox="0 0 1000 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <polyline
+        class="tear-stroke"
+        points="0,50 28,47 55,53 90,46 130,52 168,47 210,51 255,45 300,52 345,47 388,53 430,46 475,51 520,46 560,53 600,47 645,52 688,46 725,53 760,47 800,52 840,47 878,52 915,46 955,52 1000,48"
+        fill="none"
+        stroke-width="0.6"></polyline>
+    </svg>
+
+    <!-- ABOVE THE TEAR -->
+    <div class="split-above" aria-hidden="true">
+      <div class="numeral-wrap">
+        <span class="numeral">404</span>
+      </div>
+    </div>
+
+    <!-- BELOW THE TEAR -->
+    <div class="split-below" aria-hidden="true">
+      <div class="numeral-wrap">
+        <span class="numeral">404</span>
+      </div>
+    </div>
+
+    <!-- LABEL IN THE GAP -->
+    <div class="pnf-label">
+      <span class="pnf-top">404 · page not found</span>
+      <span class="pnf-msg">This page tore away from here.</span>
+    </div>
+
+    <!-- BACK LINK -->
+    <div class="back-wrap">
+      <a class="back-link" href="/">find your way back</a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .banner-404 {
+    /* banner fills remaining space between header + footer */
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 420px;
+  }
+
+  /* ─── RULED LINES (CSS only) ─────────────────── */
+  .ruled {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(232, 226, 212, 0.03) 39px,
+      rgba(232, 226, 212, 0.03) 40px
+    );
+  }
+
+  [data-theme='github-light'] .ruled {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(26, 23, 18, 0.04) 39px,
+      rgba(26, 23, 18, 0.04) 40px
+    );
+  }
+
+  /* ─── GRAIN (SVG filter, no canvas) ─────────── */
+  .grain {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px;
+    opacity: 0.05;
+  }
+  [data-theme='github-light'] .grain {
+    opacity: 0.04;
+  }
+
+  /* ─── TEAR SVG SEAM ──────────────────────────── */
+  .tear-svg {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  /* ─── SPLIT PANELS ───────────────────────────── */
+  /* the 404 numeral is rendered TWICE — once per panel,
+   clipped so only its respective half is visible        */
+  .split-above {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* on load: slides down from above into place */
+    animation: aboveSlideIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    transition:
+      clip-path 0.6s ease,
+      transform 0.6s ease;
+  }
+  .split-below {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: belowSlideIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    transition:
+      clip-path 0.6s ease,
+      transform 0.6s ease;
+  }
+
+  /* ── hover the banner → halves drift further apart ── */
+  .banner-404:hover .split-above {
+    transform: translateY(-12px);
+  }
+  .banner-404:hover .split-below {
+    transform: translateY(12px);
+  }
+
+  @keyframes aboveSlideIn {
+    from {
+      transform: translateY(-80px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes belowSlideIn {
+    from {
+      transform: translateY(80px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* ─── THE NUMERAL ────────────────────────────── */
+  .numeral-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* both panels share the same layout so the two halves align */
+  }
+
+  .numeral {
+    font-family: var(--font-primary);
+    font-size: clamp(9rem, 20vw, 17rem);
+    font-weight: 200;
+    letter-spacing: -0.06em;
+    color: #e8e2d4;
+    line-height: 1;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  [data-theme='github-light'] .numeral {
+    color: #1a1712;
+  }
+
+  /* the below panel's numeral is shifted sgithub-lightly to feel slipped */
+  .split-below .numeral {
+    transform: translateX(6px);
+    transition: transform 0.6s ease;
+  }
+  .banner-404:hover .split-below .numeral {
+    transform: translateX(10px);
+  }
+
+  /* ─── PAGE NOT FOUND label — between the halves ─ */
+  .pnf-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .pnf-top {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(232, 226, 212, 0.3);
+    opacity: 0;
+    animation: labelIn 0.6s ease 0.85s forwards;
+  }
+
+  [data-theme='github-light'] .pnf-top {
+    color: rgba(26, 23, 18, 0.32);
+  }
+
+  .pnf-msg {
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(232, 226, 212, 0.5);
+    opacity: 0;
+    animation: labelIn 0.6s ease 1.05s forwards;
+  }
+
+  [data-theme='github-light'] .pnf-msg {
+    color: rgba(26, 23, 18, 0.45);
+  }
+
+  /* ─── BACK LINK ──────────────────────────────── */
+  .back-wrap {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    opacity: 0;
+    animation: labelIn 0.6s ease 1.25s forwards;
+  }
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(232, 226, 212, 0.28);
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 3px;
+    transition: opacity 0.25s;
+  }
+
+  [data-theme='github-light'] .back-link {
+    color: rgba(26, 23, 18, 0.32);
+  }
+
+  /* underline draws itself on hover */
+  .back-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(232, 226, 212, 0.28);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-theme='github-light'] .back-link::after {
+    background: rgba(26, 23, 18, 0.28);
+  }
+  .back-link:hover {
+    opacity: 1;
+  }
+  .back-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* ─── TEAR LINE COLOURS (inline, reacts to theme) */
+  .tear-stroke {
+    stroke: rgba(232, 226, 212, 0.16);
+  }
+  [data-theme='github-light'] .tear-stroke {
+    stroke: rgba(26, 23, 18, 0.18);
+  }
+
+  @keyframes labelIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

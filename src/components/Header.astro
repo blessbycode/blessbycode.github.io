@@ -1,0 +1,93 @@
+---
+import Logo from '~/components/Logo.astro';
+import Navbar from './Navbar.astro';
+import ThemeSwitcher from './ThemeSwitcher.astro';
+import Search from './Search.astro';
+
+const coursePage = Astro.url.pathname.startsWith('/courses');
+---
+
+<header class="primary-header">
+  <div class="header-inner">
+    <Logo />
+    <Navbar />
+
+    <div class="header-right">
+      {coursePage ? null : <Search />}
+      <ThemeSwitcher />
+      <button id="menu-btn" class="menu-icon" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .primary-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: var(--border-subtle);
+    transition:
+      background var(--transition),
+      border-color var(--transition);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px var(--space-6);
+    max-width: 1160px;
+    margin: 0 auto;
+    gap: var(--space-4);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .menu-icon {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    border: var(--border-default);
+    position: relative;
+
+    span {
+      width: 20px;
+      height: 1.5px;
+      background: var(--text-secondary);
+      transition: all var(--transition);
+      border-radius: 2px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .menu-icon {
+      display: flex;
+    }
+
+    .primary-header {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  const menu_btn = document.getElementById('menu-btn') as HTMLElement;
+  const mobileNav = document.getElementById('mobile-nav') as HTMLElement;
+
+  menu_btn.addEventListener('click', () => {
+    mobileNav.classList.toggle('open');
+  });
+</script>

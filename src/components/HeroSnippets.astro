@@ -1,0 +1,680 @@
+---
+
+---
+
+<section class="hero" id="hero">
+  <canvas id="gridCanvas"></canvas>
+  <div class="scanlines"></div>
+  <div class="crt-flicker"></div>
+
+  <!-- diagonal tickers -->
+  <div class="ticker-wrap">
+    <div class="ticker-band">
+      <span class="ticker-item">useDebounce</span>
+      <span class="ticker-item">sleep &amp; retry</span>
+      <span class="ticker-item">cx()</span>
+      <span class="ticker-item">groupBy</span>
+      <span class="ticker-item">formatDate</span>
+      <span class="ticker-item">deepClone</span>
+      <span class="ticker-item">throttle</span>
+      <span class="ticker-item">parseJWT</span>
+      <span class="ticker-item">useLocalStorage</span>
+      <span class="ticker-item">tryCatch</span>
+      <!-- repeat -->
+      <span class="ticker-item">useDebounce</span>
+      <span class="ticker-item">sleep &amp; retry</span>
+      <span class="ticker-item">cx()</span>
+      <span class="ticker-item">groupBy</span>
+      <span class="ticker-item">formatDate</span>
+      <span class="ticker-item">deepClone</span>
+      <span class="ticker-item">throttle</span>
+      <span class="ticker-item">parseJWT</span>
+      <span class="ticker-item">useLocalStorage</span>
+      <span class="ticker-item">tryCatch</span>
+    </div>
+    <div class="ticker-band">
+      <span class="ticker-item">React</span>
+      <span class="ticker-item">TypeScript</span>
+      <span class="ticker-item">Node.js</span>
+      <span class="ticker-item">CSS</span>
+      <span class="ticker-item">Arrays</span>
+      <span class="ticker-item">Async</span>
+      <span class="ticker-item">DOM</span>
+      <span class="ticker-item">Forms</span>
+      <span class="ticker-item">Auth</span>
+      <span class="ticker-item">API</span>
+      <span class="ticker-item">React</span>
+      <span class="ticker-item">TypeScript</span>
+      <span class="ticker-item">Node.js</span>
+      <span class="ticker-item">CSS</span>
+      <span class="ticker-item">Arrays</span>
+      <span class="ticker-item">Async</span>
+      <span class="ticker-item">DOM</span>
+      <span class="ticker-item">Forms</span>
+      <span class="ticker-item">Auth</span>
+      <span class="ticker-item">API</span>
+    </div>
+  </div>
+
+  <!-- corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- HEADLINE -->
+  <div class="content">
+    <div class="headline">
+      <div class="h-row">
+        <span class="h-word w1">the</span>
+        <span class="h-word w2">CODE</span>
+      </div>
+      <div class="h-row">
+        <span class="h-word w3">VAULT</span>
+        <span class="h-word w4">—</span>
+      </div>
+      <div class="h-row">
+        <span class="h-word w5">SHIP IT.</span>
+      </div>
+    </div>
+
+    <div class="subtext-wrap">
+      <div class="sub-bar"></div>
+      <p class="subtext">
+        Battle-tested snippets, zero fluff. Copy the exact lines that solve the
+        problem in front of you — then get back to building.
+      </p>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="sb-left">
+      <div class="sb-item"><div class="sb-dot"></div>Real snippets</div>
+      <div class="sb-item">
+        <div class="sb-dot d2"></div>Different categories
+      </div>
+      <div class="sb-item"><div class="sb-dot d3"></div>live updates</div>
+    </div>
+    <div class="sb-right">
+      mouse: <span class="sb-coords" id="coords">000, 000</span>
+    </div>
+  </div>
+</section>
+
+<style is:inline>
+  .hero {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ── RIPPLE DOT GRID ── */
+  #gridCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* ── SCANLINES ── */
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 136, 0.018) 2px,
+      rgba(0, 255, 136, 0.018) 3px
+    );
+  }
+
+  /* ── CRT FLICKER ── */
+  .crt-flicker {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    animation: flicker 8s step-end infinite;
+    background: rgba(0, 255, 136, 0.012);
+  }
+  @keyframes flicker {
+    0%,
+    94%,
+    96%,
+    98%,
+    100% {
+      opacity: 0;
+    }
+    95% {
+      opacity: 1;
+    }
+    97% {
+      opacity: 0.5;
+    }
+    99% {
+      opacity: 0.8;
+    }
+  }
+
+  /* ── DIAGONAL TICKER ── */
+  .ticker-wrap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .ticker-band {
+    position: absolute;
+    width: 200%;
+    padding: 7px 0;
+    background: rgba(0, 255, 136, 0.035);
+    border-top: 1px solid rgba(0, 255, 136, 0.1);
+    border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+    white-space: nowrap;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(0, 255, 136, 0.35);
+    animation: tickerRoll 22s linear infinite;
+  }
+  .ticker-band:nth-child(1) {
+    top: 18%;
+    transform: rotate(-6deg) translateX(0);
+    transform-origin: left center;
+  }
+  .ticker-band:nth-child(2) {
+    bottom: 20%;
+    transform: rotate(-6deg) translateX(0);
+    transform-origin: left center;
+    animation-direction: reverse;
+    animation-duration: 26s;
+  }
+  @keyframes tickerRoll {
+    from {
+      transform: rotate(-6deg) translateX(0);
+    }
+    to {
+      transform: rotate(-6deg) translateX(-50%);
+    }
+  }
+  .ticker-item {
+    display: inline-block;
+    padding: 0 28px;
+  }
+  .ticker-item::after {
+    content: '·';
+    margin-left: 28px;
+    opacity: 0.4;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    position: relative;
+    z-index: 5;
+    padding: 0 8vw;
+  }
+
+  /* HEADLINE — Bebas Neue, words slam in from different sides */
+  .headline {
+    line-height: 0.88;
+    letter-spacing: 0.05em;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+
+  .h-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.15em;
+    overflow: hidden;
+  }
+
+  .h-word {
+    font-family: var(--font-primary);
+    display: inline-block;
+    opacity: 0;
+  }
+  /* LINE 1 */
+  .h-word.w1 {
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    color: rgba(0, 255, 136, 0.18);
+    animation: slamRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  .h-word.w2 {
+    font-size: clamp(5rem, 11vw, 10rem);
+    color: #00ff88;
+    text-shadow:
+      0 0 40px rgba(0, 255, 136, 0.4),
+      0 0 80px rgba(0, 255, 136, 0.15);
+    animation: slamDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards;
+  }
+  /* LINE 2 */
+  .h-word.w3 {
+    font-size: clamp(5rem, 11vw, 10rem);
+    color: #00ff88;
+    text-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
+    animation: slamLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.36s forwards;
+  }
+  .h-word.w4 {
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    color: rgba(0, 255, 136, 0.18);
+    animation: slamRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.48s forwards;
+  }
+  /* LINE 3 — accent */
+  .h-word.w5 {
+    font-size: clamp(5rem, 11vw, 10rem);
+    background: linear-gradient(90deg, #00ff88, #00ccff, #00ff88);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation:
+      slamUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards,
+      neonCycle 4s ease-in-out 1s infinite;
+  }
+  @keyframes neonCycle {
+    0%,
+    100% {
+      background-position: 0%;
+    }
+    50% {
+      background-position: 100%;
+    }
+  }
+
+  @keyframes slamDown {
+    from {
+      opacity: 0;
+      transform: translateY(-60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slamUp {
+    from {
+      opacity: 0;
+      transform: translateY(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slamLeft {
+    from {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slamRight {
+    from {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ── SUBTEXT ── */
+  .subtext-wrap {
+    margin-top: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease 0.85s forwards;
+  }
+  .sub-bar {
+    width: 2px;
+    flex-shrink: 0;
+    align-self: stretch;
+    background: linear-gradient(to bottom, #00ff88, transparent);
+    min-height: 60px;
+  }
+  .subtext {
+    font-family: var(--font-mono);
+    font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+    line-height: 1.7;
+    font-weight: 300;
+    color: rgba(0, 255, 136, 0.38);
+    max-width: 420px;
+  }
+
+  /* ── BOTTOM STATUS BAR ── */
+  .status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    border-top: 1px solid rgba(0, 255, 136, 0.08);
+    padding: 12px 8vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 255, 136, 0.02);
+    opacity: 0;
+    animation: fadeInUp 0.4s ease 1s forwards;
+  }
+  .sb-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .sb-item {
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(0, 255, 136, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sb-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #00ff88;
+    animation: sbPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes sbPulse {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+  .sb-dot.d2 {
+    animation-delay: 0.28s;
+    background: #00ccff;
+  }
+  .sb-dot.d3 {
+    animation-delay: 0.56s;
+  }
+
+  .sb-right {
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    color: rgba(0, 255, 136, 0.2);
+  }
+  .sb-coords {
+    color: rgba(0, 255, 136, 0.45);
+  }
+
+  @media (max-width: 767px) {
+    .sb-right {
+      display: none;
+    }
+  }
+
+  /* ── CORNER BRACKET ── */
+  .bracket {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    width: 24px;
+    height: 24px;
+  }
+  .bracket.tl {
+    top: 20px;
+    left: 20px;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+    border-left: 1px solid rgba(0, 255, 136, 0.2);
+  }
+  .bracket.tr {
+    top: 20px;
+    right: 20px;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+    border-right: 1px solid rgba(0, 255, 136, 0.2);
+  }
+  .bracket.bl {
+    bottom: 50px;
+    left: 20px;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+    border-left: 1px solid rgba(0, 255, 136, 0.2);
+  }
+  .bracket.br {
+    bottom: 50px;
+    right: 20px;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+    border-right: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ── LIGHT THEME ── */
+  [data-theme='github-light'] {
+    .scanlines {
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 120, 60, 0.015) 2px,
+        rgba(0, 120, 60, 0.015) 3px
+      );
+    }
+
+    /* ── LIGHT THEME: CRT flicker (subtler) ── */
+    .crt-flicker {
+      background: rgba(0, 160, 80, 0.008);
+    }
+
+    /* ── LIGHT THEME: diagonal ticker bands ── */
+    .ticker-band {
+      background: rgba(0, 148, 60, 0.04);
+      border-top-color: rgba(0, 148, 60, 0.12);
+      border-bottom-color: rgba(0, 148, 60, 0.12);
+      color: rgba(0, 120, 60, 0.45);
+    }
+
+    /* ── LIGHT THEME: headline dim words ── */
+    .h-word.w1 {
+      color: rgba(0, 148, 60, 0.22);
+    }
+    .h-word.w2 {
+      color: #006b30;
+      text-shadow:
+        0 0 40px rgba(0, 148, 60, 0.2),
+        0 0 80px rgba(0, 148, 60, 0.08);
+    }
+    .h-word.w3 {
+      color: #006b30;
+      text-shadow: 0 0 40px rgba(0, 148, 60, 0.2);
+    }
+    .h-word.w4 {
+      color: rgba(0, 148, 60, 0.22);
+    }
+
+    /* ── LIGHT THEME: gradient accent word ── */
+    .h-word.w5 {
+      background: linear-gradient(90deg, #006b30, #008b50, #006b30);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── LIGHT THEME: sub-bar ── */
+    .sub-bar {
+      background: linear-gradient(to bottom, #006b30, transparent);
+    }
+
+    /* ── LIGHT THEME: subtext ── */
+    .subtext {
+      color: rgba(0, 90, 40, 0.45);
+    }
+
+    /* ── LIGHT THEME: status bar ── */
+    .status-bar {
+      border-top-color: rgba(0, 148, 60, 0.1);
+      background: rgba(0, 148, 60, 0.025);
+    }
+    .sb-item {
+      color: rgba(0, 120, 60, 0.4);
+    }
+    .sb-dot {
+      background: #006b30;
+    }
+    .sb-dot.d2 {
+      background: #0090a0;
+    }
+    .sb-right {
+      color: rgba(0, 120, 60, 0.28);
+    }
+    .sb-coords {
+      color: rgba(0, 120, 60, 0.6);
+    }
+
+    /* ── LIGHT THEME: corner brackets ── */
+    .bracket.tl,
+    .bracket.tr {
+      border-top-color: rgba(0, 148, 60, 0.25);
+    }
+    .bracket.tl,
+    .bracket.bl {
+      border-left-color: rgba(0, 148, 60, 0.25);
+    }
+    .bracket.tr,
+    .bracket.br {
+      border-right-color: rgba(0, 148, 60, 0.25);
+    }
+    .bracket.bl,
+    .bracket.br {
+      border-bottom-color: rgba(0, 148, 60, 0.25);
+    }
+  }
+</style>
+
+<script is:inline>
+  /* ── RIPPLE DOT GRID ── */
+  const canvas = document.getElementById('gridCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let W,
+    H,
+    cols,
+    rows,
+    dots = [];
+  let mouse = { x: -999, y: -999 };
+  let ripples = []; // {x,y,r,born}
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    const spacing = 28;
+    cols = Math.ceil(W / spacing) + 1;
+    rows = Math.ceil(H / spacing) + 1;
+    dots = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        dots.push({ x: c * spacing, y: r * spacing });
+      }
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  document.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    document.getElementById('coords').textContent =
+      String(Math.round(e.clientX)).padStart(3, '0') +
+      ', ' +
+      String(Math.round(e.clientY)).padStart(3, '0');
+  });
+
+  /* click creates ripple */
+  document.addEventListener('click', (e) => {
+    ripples.push({ x: e.clientX, y: e.clientY, born: performance.now() });
+  });
+
+  let t = 0;
+  function draw() {
+    requestAnimationFrame(draw);
+    ctx.clearRect(0, 0, W, H);
+    t += 0.016;
+
+    const now = performance.now();
+    // remove dead ripples
+    ripples = ripples.filter((rp) => now - rp.born < 1800);
+
+    dots.forEach((d) => {
+      // distance from mouse
+      const dx = d.x - mouse.x;
+      const dy = d.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const mouseInfluence = Math.max(0, 1 - dist / 180);
+
+      // ripple influence
+      let rippleInfluence = 0;
+      ripples.forEach((rp) => {
+        const age = (now - rp.born) / 1800;
+        const rdx = d.x - rp.x;
+        const rdy = d.y - rp.y;
+        const rdist = Math.sqrt(rdx * rdx + rdy * rdy);
+        const waveFront = age * 600;
+        const diff = Math.abs(rdist - waveFront);
+        if (diff < 30) {
+          rippleInfluence = Math.max(
+            rippleInfluence,
+            (1 - diff / 30) * (1 - age),
+          );
+        }
+      });
+
+      const influence = Math.max(mouseInfluence, rippleInfluence);
+      const size = 1.2 + influence * 2.8;
+      const alpha = 0.08 + influence * 0.55;
+
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, size / 2, 0, Math.PI * 2);
+      ctx.fillStyle =
+        influence > 0.5
+          ? `rgba(0,255,136,${alpha})`
+          : `rgba(0,255,136,${alpha})`;
+      if (influence > 0.7) {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00FF88';
+      } else {
+        ctx.shadowBlur = 0;
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }
+  draw();
+</script>

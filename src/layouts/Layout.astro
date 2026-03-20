@@ -1,0 +1,85 @@
+---
+import '~/styles/global.css';
+import siteConfig from '~/site.config';
+import Header from '~/components/Header.astro';
+import NavbarMobile from '~/components/NavbarMobile.astro';
+import Footer from '~/components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  tags?: string[];
+  author?: string;
+}
+
+const { title, description, tags, author } = Astro.props;
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, ''); // Remove trailing slash for consistency
+
+const pageTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
+const pageDescription = description || siteConfig.description;
+const pageAuthor = author || siteConfig.author;
+const pageType = Astro.url.pathname.startsWith('/articles')
+  ? 'article'
+  : Astro.url.pathname.startsWith('/snippets')
+    ? 'snippet'
+    : Astro.url.pathname.startsWith('/guides')
+      ? 'guide'
+      : Astro.url.pathname.startsWith('/courses')
+        ? 'course'
+        : 'website';
+const pageKeywords = [
+  ...new Set(
+    siteConfig.tags.concat(tags || []).map((word) => word.toLowerCase()),
+  ),
+].join(', ');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={pageDescription} />
+    <meta name="author" content={pageAuthor} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content={pageType} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="keywords" content={pageKeywords} />
+    <link rel="canonical" href={pageUrl} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.title}
+      href={new URL('rss.xml', Astro.site)}
+    />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('data-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme =
+            stored ||
+            (prefersDark ? 'github-dark-dimmed' : 'github-light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (_) {
+          document.documentElement.setAttribute('data-theme', 'github-dark-dimmed');
+        }
+      })();
+    </script>
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <Header />
+    <NavbarMobile />
+    <slot />
+    <Footer />
+  </body>
+</html>

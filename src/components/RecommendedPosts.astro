@@ -1,0 +1,50 @@
+---
+import type { Collation, PostType } from '~/types';
+import { SeriesGroup } from '~/utils';
+import Card from './Card.astro';
+import SectionHeader from './SectionHeader.astro';
+
+const { post, prev, next } = Astro.props;
+
+let series: Collation<PostType> | undefined;
+if (post.data.series) {
+  const seriesGroup = await SeriesGroup.build();
+  series = seriesGroup.match(post.data.series);
+  if (!series) {
+    // This should not happen if series data is correct
+    throw new Error(`Series "${post.data.series}" not found`);
+  }
+}
+const showSeries = series && series.entries.length > 1;
+---
+
+{
+  showSeries && series ? (
+    <section class="recommendation-wrapper">
+      <SectionHeader name="Continue The Series">
+        {series.title} Series
+      </SectionHeader>
+      <div class="card-wrapper">
+        {series.entries.map((post) => (
+          <Card post={post} />
+        ))}
+      </div>
+    </section>
+  ) : prev || next ? (
+    <section class="recommendation-wrapper">
+      <SectionHeader name="You Might Also Enjoy">Related Posts</SectionHeader>
+      <div class="card-wrapper">
+        {prev && <Card post={prev} />}
+        {next && <Card post={next} />}
+      </div>
+    </section>
+  ) : null
+}
+
+<style>
+  .recommendation-wrapper {
+    margin-top: var(--space-15);
+    padding-top: var(--space-10);
+    border-top: var(--border-subtle);
+  }
+</style>
